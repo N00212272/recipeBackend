@@ -1,0 +1,29 @@
+{
+  "name": "ca1-ajs-backend",
+  "version": "1.0.0",
+  "description": "Backend for CA1 AJS",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "serve": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/N00212272/recipeBackend.git"
+  },
+  "author": "Kacper Agatowski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/N00212272/recipeBackend/issues"
+  },
+  "homepage": "https://github.com/N00212272/recipeBackend#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.7.1"
+  }
+}
