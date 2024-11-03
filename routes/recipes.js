@@ -9,15 +9,17 @@ const{
     deleteData
     } = require('../controllers/recipe.controller')
 
+    const {loginRequired} = require('../controllers/user.controller');
+    
 router.get('/', readAll);
 
-router.get('/:id', readOne);
+router.get('/:id',loginRequired, readOne);
 
-router.post('/', createData);
+router.post('/',loginRequired, createData);
 
-router.put('/:id', updateData);
+router.put('/:id',loginRequired, updateData);
 
-router.delete('/:id', deleteData);
+router.delete('/:id',loginRequired, deleteData);
 
 
 module.exports = router;

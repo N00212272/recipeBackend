@@ -5,6 +5,11 @@ const unitSchema = new Schema({
         type:String,
         required: [true, 'Unit name is required'],
         unique: true
+    },
+    abbreviation: {
+        type: String,
+        required: [true, 'Unit abbreviation is required'],
+        unique: true
     }
 }, {timestamps: true})
 
