@@ -25,11 +25,11 @@ const userSchema = new Schema({
         required:true,
         min: 5
     },
-    //many to many 
     favourites: [{
         type: Schema.Types.ObjectId,
         ref:'Recipe'
     }],
+    // many to many
     roles: [{
         type: Schema.Types.ObjectId,
         ref:'Role',

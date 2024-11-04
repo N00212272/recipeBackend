@@ -99,10 +99,19 @@ const updateData = (req,res) => {
             return res.status(500).json(err)
         });
 }
-const deleteData = (req,res) => {
+const deleteData = async (req,res) => {
     let id = req.params.id;
+    const userId = req.user._id;
+    const foundRecipe = await Recipe.findById(id);
 
-    Recipe.findByIdAndDelete(id)
+    if (!foundRecipe) {
+        return res.status(404).json({ message: `Recipe with id ${id} not found` });
+    }
+    
+    if (foundRecipe.user.toString() !== userId.toString()) {
+        return res.status(403).json({ message: "You are not authorized to delete this recipe" });
+    }
+    await Recipe.findByIdAndDelete(id)
     .then(data => {
         if(!data){
             return res.status(404).json({ message: `Recipe with id ${id} not found` });
@@ -118,7 +127,22 @@ const deleteData = (req,res) => {
         return res.status(500).json(err)
     })
 }
+const recipesByUser = (req, res) => {
+    const userId = req.user._id;
 
+    Recipe.find({ user: userId })
+        .then(recipes => {
+            if (recipes.length > 0) {
+                return res.status(200).json(recipes);
+            } else {
+                return res.status(404).json({ message: "No recipes found for this user." });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json(err);
+        });
+}
 module.exports = {
     readAll,
     readOne,

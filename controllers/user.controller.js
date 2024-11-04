@@ -5,6 +5,7 @@ const Role = require('../models/role.model');
 require('dotenv').config()
 const register = (req,res) => {
     console.log(req.body);
+    req.headers
     Role.findOne({ name: 'customer' })
     .then(customerRole => {
         if (!customerRole) {
@@ -42,15 +43,16 @@ const login = (req,res) => {
                 message:"authentication failed. Invalid User"
             })
         }
-        const roleNames = user.roles.map(role => role.name);
+        // const roleNames = user.roles.map(role => role.name);
         return res.status(200).json({
             message:"Logged in succesfully",
             token: jwt.sign({
                 email: user.email,
                 full_name: user.full_name,
                 _id: user._id,
-                roles: roleNames
-            },process.env.JWT_SECRET)
+                roles: user.roles
+            },process.env.JWT_SECRET),
+           
         })
 
     })
@@ -70,8 +72,83 @@ const loginRequired = (req,res,next) => {
     }
 }
 
+// checks if the role is equal to admin etc
+const hasRole = (role) => {
+
+    return (req,res,next) => {
+        // needed to add some function as to check the array of roles. To see if at least one is true
+        if (req.user.roles.some(userRole => userRole.name === role)) {
+            return next();
+        }
+            else{
+                return res.status(401).json({
+                    message:"Unauthorised User!"
+                })
+            }
+        }
+
+}
+// favourites adding & deleting 
+const addFavourite = (req, res) => {
+    const userId = req.user._id;
+    const recipeId = req.params.recipeId;
+    User.findByIdAndUpdate(
+        userId,
+        // add to set adds the recipe to favourites array if it doesnt already exist
+        { $addToSet: { favourites: recipeId } },
+        { new: true } 
+    )
+    .then(user => {
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+        return res.status(200).json({
+            message: "Recipe added to favourites"
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        res.status(500).json({
+            message:"Server Error"
+        });
+    });
+};
+const removeFavourite = (req, res) => {
+    const userId = req.user._id;
+    const recipeId = req.params.recipeId;
+
+    User.findByIdAndUpdate(
+        userId,
+        // pull removes the recipe from the favourites if it exists
+        { $pull: { favourites: recipeId } },
+        { new: true }  
+    )
+    .then(user => {
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+        return res.status(200).json({
+            message: "Recipe removed from favourites",
+            favourites: user.favourites
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        res.status(500).json({
+            message:"Server Error"
+        });
+    });
+};
+
 module.exports = {
     register,
     login,
-    loginRequired
+    loginRequired,
+    hasRole,
+    addFavourite,
+    removeFavourite
 };

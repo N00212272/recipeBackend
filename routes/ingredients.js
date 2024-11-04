@@ -9,13 +9,13 @@ const{
     deleteData
     } = require('../controllers/ingredient.controller')
 
-    const {loginRequired} = require('../controllers/user.controller');
+    const {loginRequired, hasRole} = require('../controllers/user.controller');
 
 router.get('/', readAll);
 
 router.get('/:id', readOne);
 
-router.post('/',loginRequired, createData);
+router.post('/',loginRequired, hasRole("admin"), createData);
 
 router.put('/:id',loginRequired, updateData);
 
