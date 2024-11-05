@@ -2,6 +2,7 @@ const User = require('../models/user.model');
 const Role = require('../models/role.model'); 
 const bcrypt = require('bcryptjs');
 const usersSeed = async () => {
+    await User.deleteMany();
     const users = [
         {
             firstName:"Admin",

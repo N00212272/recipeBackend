@@ -1,7 +1,7 @@
-const RecipeCategory = require('../models/recipeCategory.model')
+const IngredientCategory = require('../models/IngredientCategory.model')
 
 const readAll = (req,res) => {
-    RecipeCategory.find()
+    IngredientCategory.find()
     .then(data => {
         console.log(data);
         if(data.length > 0){
@@ -19,21 +19,21 @@ const readAll = (req,res) => {
 }
 const readOne = (req,res) => {
     let id = req.params.id;
-    RecipeCategory.findById(id)
+    IngredientCategory.findById(id)
     .then(data => {
         if(!data){
             return res.status(404).json({
-                message: `RecipeCategory with id: ${id} not found`
+                message: `Ingredient Category with id: ${id} not found`
             })
         }
         return res.status(200).json({
-            message: `RecipeCategory with id: ${id} retrieved`,
+            message: `Ingredient Category with id: ${id} retrieved`,
             data
         })
     })
     .catch(err => {
         if(err.name === "CastError"){
-            return res.status(404).json(`RecipeCategory with id: ${id} not found`);
+            return res.status(404).json(`Ingredient Category with id: ${id} not found`);
         }
         console.log(err);
         return res.status(500).json(err)
@@ -44,11 +44,11 @@ const createData = (req,res) => {
     console.log(req.body)
     let body = req.body;
 
-    RecipeCategory.create(body)
+    IngredientCategory.create(body)
         .then(data => {
-            console.log(`RecipeCategory created`, data);
+            console.log(`Ingredient Category created`, data);
             return res.status(201).json({
-                message: "RecipeCategory created",
+                message: "Ingredient Category created",
                 data
             })
         })
@@ -68,17 +68,17 @@ const updateData = (req,res) => {
     let id = req.params.id;
     let body = req.body;
 
-    RecipeCategory.findByIdAndUpdate(id,body, {
+    IngredientCategory.findByIdAndUpdate(id,body, {
         new:true,
         runValidators:true,
     })
         .then(data => {
-            console.log(`RecipeCategory updated`, data);
+            console.log(`Ingredient Category updated`, data);
             if(!data){
-                return res.status(404).json({ message: `RecipeCategory with id ${id} not found` });
+                return res.status(404).json({ message: `Ingredient Category with id ${id} not found` });
             }
             return res.status(201).json({
-                message: "RecipeCategory updated",
+                message: "Ingredient Category updated",
                 data
             })
         })
@@ -87,7 +87,7 @@ const updateData = (req,res) => {
             if(err.name === "CastError"){
                 if(err.kind === 'ObjectId'){
                     return res.status(404).json({
-                        message: `RecipeCategory with id:${id} not found`
+                        message: `Ingredient Category with id:${id} not found`
                     });
             }
             else{
@@ -102,18 +102,18 @@ const updateData = (req,res) => {
 const deleteData = (req,res) => {
     let id = req.params.id;
 
-    RecipeCategory.findByIdAndDelete(id)
+    IngredientCategory.findByIdAndDelete(id)
     .then(data => {
         if(!data){
-            return res.status(404).json({ message: `RecipeCategory with id ${id} not found` });
+            return res.status(404).json({ message: `Ingredient Category with id ${id} not found` });
         }
          return res.status(200).json({
-        "message":`RecipeCategory Deleted with id: ${id} `});
+        "message":`Ingredient Category Deleted with id: ${id} `});
     })
     .catch(err => {
         console.log(err)
         if(err.name === "CastError"){
-            return res.status(404).json(`RecipeCategory with id: ${id} not found`);
+            return res.status(404).json(`Ingredient Category with id: ${id} not found`);
         }
         return res.status(500).json(err)
     })

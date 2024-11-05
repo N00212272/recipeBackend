@@ -7,15 +7,15 @@ const{
     createData,
     updateData,
     deleteData
-    } = require('../controllers/ingredientCategory.controller')
+    } = require('../controllers/unit.controller')
 
     const {loginRequired, hasRole} = require('../controllers/user.controller');
-
+    
 router.get('/', readAll);
 
-router.get('/:id', readOne);
+router.get('/:id',loginRequired,hasRole("admin"), readOne);
 
-router.post('/',loginRequired, hasRole("admin"), createData);
+router.post('/',loginRequired,hasRole("admin"), createData);
 
 router.put('/:id',loginRequired,hasRole("admin"), updateData);
 

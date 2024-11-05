@@ -23,17 +23,17 @@ const readOne = (req,res) => {
     .then(data => {
         if(!data){
             return res.status(404).json({
-                message: `RecipeCategory with id: ${id} not found`
+                message: `Recipe Category with id: ${id} not found`
             })
         }
         return res.status(200).json({
-            message: `RecipeCategory with id: ${id} retrieved`,
+            message: `Recipe Category with id: ${id} retrieved`,
             data
         })
     })
     .catch(err => {
         if(err.name === "CastError"){
-            return res.status(404).json(`RecipeCategory with id: ${id} not found`);
+            return res.status(404).json(`Recipe Category with id: ${id} not found`);
         }
         console.log(err);
         return res.status(500).json(err)
@@ -46,9 +46,9 @@ const createData = (req,res) => {
 
     RecipeCategory.create(body)
         .then(data => {
-            console.log(`RecipeCategory created`, data);
+            console.log(`Recipe Category created`, data);
             return res.status(201).json({
-                message: "RecipeCategory created",
+                message: "Recipe Category created",
                 data
             })
         })
@@ -73,12 +73,12 @@ const updateData = (req,res) => {
         runValidators:true,
     })
         .then(data => {
-            console.log(`RecipeCategory updated`, data);
+            console.log(`Recipe Category updated`, data);
             if(!data){
-                return res.status(404).json({ message: `RecipeCategory with id ${id} not found` });
+                return res.status(404).json({ message: `Recipe Category with id ${id} not found` });
             }
             return res.status(201).json({
-                message: "RecipeCategory updated",
+                message: "Recipe Category updated",
                 data
             })
         })
@@ -87,7 +87,7 @@ const updateData = (req,res) => {
             if(err.name === "CastError"){
                 if(err.kind === 'ObjectId'){
                     return res.status(404).json({
-                        message: `RecipeCategory with id:${id} not found`
+                        message: `Recipe Category with id:${id} not found`
                     });
             }
             else{
@@ -105,15 +105,15 @@ const deleteData = (req,res) => {
     RecipeCategory.findByIdAndDelete(id)
     .then(data => {
         if(!data){
-            return res.status(404).json({ message: `RecipeCategory with id ${id} not found` });
+            return res.status(404).json({ message: `Recipe Category with id ${id} not found` });
         }
          return res.status(200).json({
-        "message":`RecipeCategory Deleted with id: ${id} `});
+        "message":`Recipe Category Deleted with id: ${id} `});
     })
     .catch(err => {
         console.log(err)
         if(err.name === "CastError"){
-            return res.status(404).json(`RecipeCategory with id: ${id} not found`);
+            return res.status(404).json(`Recipe Category with id: ${id} not found`);
         }
         return res.status(500).json(err)
     })

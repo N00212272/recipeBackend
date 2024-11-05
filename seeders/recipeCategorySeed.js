@@ -9,7 +9,7 @@ const seedRecipeCategories = async () => {
         { name: 'Snacks' },
         { name: 'Beverages' },
     ];
-
+    await RecipeCategory.deleteMany();
     await RecipeCategory.insertMany(categories);
     console.log('Recipe categories seeded.');
 };

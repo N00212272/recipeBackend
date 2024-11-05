@@ -7,7 +7,8 @@ const seedRoles = async () => {
         { name: 'admin' }
     ];
 
-
+    await Role.deleteMany();
+    
     for (const role of roles) {
         await Role.create(role);
         console.log(`Role created: ${role.name}`);

@@ -1,6 +1,7 @@
 const IngredientCategory = require('../models/ingredientCategory.model');
 
 const seedIngredientCategories = async () => {
+    await IngredientCategory.deleteMany();
     const categories = [
         { name: 'Vegetables' },
         { name: 'Fruits' },

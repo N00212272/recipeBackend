@@ -1,11 +1,11 @@
 const Ingredient = require('../models/ingredient.model');
-const IngredientCategory = require('../models/ingredientCategory.model');
+const IngredientCategory = require('../models/ingredientCategory.model.js');
 const Unit = require('../models/unit.model');
 
 const seedIngredients = async () => {
     const categories = await IngredientCategory.find();
     const units = await Unit.find();
-
+    await Ingredient.deleteMany();
     const ingredients = [
         {
             name: 'Tomato',

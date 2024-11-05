@@ -17,9 +17,9 @@ router.get('/:id', readOne);
 
 router.post('/',loginRequired, hasRole("admin"), createData);
 
-router.put('/:id',loginRequired, updateData);
+router.put('/:id',loginRequired,hasRole("admin"), updateData);
 
-router.delete('/:id',loginRequired, deleteData);
+router.delete('/:id',loginRequired,hasRole("admin"), deleteData);
 
 
 module.exports = router;

@@ -6,7 +6,8 @@ const{
     readOne,
     createData,
     updateData,
-    deleteData
+    deleteData,
+    recipesByUser
     } = require('../controllers/recipe.controller')
 
     const {loginRequired} = require('../controllers/user.controller');
@@ -14,6 +15,8 @@ const{
 router.get('/', readAll);
 
 router.get('/:id',loginRequired, readOne);
+// all recipes by user
+router.get('/myRecipes',loginRequired, recipesByUser);
 
 router.post('/',loginRequired, createData);
 

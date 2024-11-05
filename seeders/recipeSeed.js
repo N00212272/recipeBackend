@@ -6,6 +6,7 @@ const Ingredient = require('../models/ingredient.model');
 const Unit = require('../models/unit.model');
 // decided to make it so it creates
 const seedRecipes = async (count) => {
+    await Recipe.deleteMany();
     // Brought in all models with relations to recipes
     const categories = await RecipeCategory.find();
     const users = await User.find();

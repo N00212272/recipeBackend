@@ -5,7 +5,6 @@ const Role = require('../models/role.model');
 require('dotenv').config()
 const register = (req,res) => {
     console.log(req.body);
-    req.headers
     Role.findOne({ name: 'customer' })
     .then(customerRole => {
         if (!customerRole) {
@@ -122,6 +121,7 @@ const removeFavourite = (req, res) => {
     User.findByIdAndUpdate(
         userId,
         // pull removes the recipe from the favourites if it exists
+        // removeFromSet wasn't working for some reason
         { $pull: { favourites: recipeId } },
         { new: true }  
     )
@@ -143,6 +143,63 @@ const removeFavourite = (req, res) => {
         });
     });
 };
+const registerAdmin = (req,res) => {
+    console.log(req.body);
+    Role.findOne({ name: 'admin' })
+    .then(adminRole => {
+        if (!adminRole) {
+            return res.status(500).json({
+                message: "Role not found"
+            });
+        }
+    let newUser = new User(req.body);
+    newUser.password = bcrypt.hashSync(req.body.password, 10)
+    newUser.roles = [adminRole._id];
+    return newUser.save()
+    })
+    .then(data => {
+        data.password = undefined;
+        return res.status(201).json(data)
+    })
+    .catch(err => {
+        if (err.code === 11000) {
+            return res.status(400).json({
+                message: "Email already exists. Please use a different email."
+            });
+        }
+        return res.status(500).json({
+            message:err.message
+        })
+    });
+}
+// had to do an async function as it needs to check if the old password was correct before proceeding
+const updatePassword = async (req,res) => {
+    try{
+        const userId = req.user._id;
+        // console.log(userId)
+        const { oldPassword, newPassword } = req.body;
+
+        const user = await User.findById(userId);
+            if(!user || user.comparePassword(oldPassword)){
+                return res.status(401).json({
+                    message:"authentication failed. Invalid User"
+                })
+            }
+        const encryptedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = encryptedPassword;
+        await user.save();
+        return res.status(201).json({
+            message:"password changed succesfully"
+        });
+    }
+    catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message:"server error"
+        })
+    }
+}
+
 
 module.exports = {
     register,
@@ -150,5 +207,7 @@ module.exports = {
     loginRequired,
     hasRole,
     addFavourite,
-    removeFavourite
+    removeFavourite,
+    registerAdmin,
+    updatePassword
 };

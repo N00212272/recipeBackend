@@ -1,18 +1,35 @@
 const mongoose = require('mongoose');
-require('dotenv').config()
-const url = process.env.DB_ATLAS_URL
+require('dotenv').config();
+let db;
 
+const connect = async () => {
+    db = null;
 
-const init = async () => {
-    mongoose.set('debug', true);
-    
     try {
-        await mongoose.connect(url); 
-        console.log('Connected to db'); 
-    } catch (err) {
-        console.error(`Error during database connection: ${err.message}`); 
-        throw err;
+        mongoose.set('strictQuery', false);
+
+        let db_url = process.env.DB_ATLAS_URL
+
+        if(process.env.ENVIROMENT === 'testing'){
+            await mongoose.connect(process.env.TEST_DB_ATLAS_URL);
+        }
+        await mongoose.connect(db_url);
+      
+
+        console.log('Connected successfully to db');
+        db = mongoose.connection;
+    } catch (error) {
+        console.log(error);
+    } finally {
+        // if (db !== null && db.readyState === 1) {
+        //     await db.close();
+        //     console.log("Disconnected successfully from db");
+        // }
     }
 };
 
-module.exports = init;
+const disconnect = async () => {
+    await db.close();
+};
+
+module.exports = { connect, disconnect };

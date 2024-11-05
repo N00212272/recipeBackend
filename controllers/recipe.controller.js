@@ -107,7 +107,7 @@ const deleteData = async (req,res) => {
     if (!foundRecipe) {
         return res.status(404).json({ message: `Recipe with id ${id} not found` });
     }
-    
+    // had to make it to string as it wasn't working when the id wasnt transformed to string
     if (foundRecipe.user.toString() !== userId.toString()) {
         return res.status(403).json({ message: "You are not authorized to delete this recipe" });
     }
@@ -148,5 +148,6 @@ module.exports = {
     readOne,
     createData,
     updateData,
-    deleteData
+    deleteData,
+    recipesByUser
 }

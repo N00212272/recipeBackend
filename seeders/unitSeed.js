@@ -12,7 +12,7 @@ const seedUnits = async () => {
         { name: 'Pound', abbreviation: 'lb' },
         { name: 'Ounce', abbreviation: 'oz' },
     ];
-
+    await Unit.deleteMany();
     await Unit.insertMany(units);
     console.log('Units seeded.');
 };
