@@ -47,8 +47,19 @@ const seedRecipes = async (count) => {
 
         recipes.push(recipe);
     }
+// add each created recipe into the recipes array within ingredients
+// simplified way then what was done within within reate
+   const insertedRecipes = await Recipe.insertMany(recipes);
 
-    await Recipe.insertMany(recipes);
+    for (let recipe of insertedRecipes) {
+        for (let { ingredient } of recipe.ingredients) {
+            await Ingredient.findByIdAndUpdate(
+                ingredient,
+                { $addToSet: { recipes: recipe._id } },
+                { new: true, useFindAndModify: false }
+            );
+        }
+    }
     console.log(`${count} recipes seeded.`);
 };
 

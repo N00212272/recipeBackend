@@ -32,7 +32,7 @@ const recipeSchema = new Schema({
     ingredients: [{
         ingredient:{
             type: Schema.Types.ObjectId,
-            ref:'ingredientCategory',
+            ref:'Ingredient',
             required:[true, 'Ingredient is required'] 
         },
         quantity: {
@@ -45,5 +45,8 @@ const recipeSchema = new Schema({
         type:String
     }
 }, {timestamps:true});
+
+// Had to add this to stop mongoose from adding an subdocument id to my column within ingredients
+recipeSchema.path('ingredients').schema.set('_id', false);
 
 module.exports = model('Recipe', recipeSchema)

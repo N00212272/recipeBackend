@@ -21,7 +21,11 @@ const ingredientSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref:'Unit',
         required:[true, 'Unit is required']
-    }
+    },
+    recipes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Recipe'
+    }],
 }, {timestamps:true});
 
 module.exports = model('Ingredient', ingredientSchema)

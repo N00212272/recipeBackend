@@ -1,5 +1,5 @@
 const Recipe = require('../models/recipe.model')
-
+const Ingredient = require('../models/ingredient.model')
 const readAll = (req,res) => {
     Recipe.find()
     .then(data => {
@@ -58,6 +58,7 @@ const createData = (req, res, next) => {
     console.log(req.body);
     let body = req.body;
     body.user = req.user._id;
+    
 
     // Manually adding validation since it's required but wasn't working in schema
     if (!body.ingredients || body.ingredients.length === 0) {
@@ -67,10 +68,12 @@ const createData = (req, res, next) => {
     
     Recipe.create(body)
         .then(data => {
-            console.log(`Recipe created`, data);
+            // console.log(`Recipe created`, data);
             // storing the data to use in the next middleware
             req.recipe = data; 
+            // console.log(req.recipe.ingredients)
             next();
+            
         })
         .catch(err => {
             console.log(err);
@@ -80,13 +83,36 @@ const createData = (req, res, next) => {
             return res.status(500).json(err);
         });
 };
-// once the recipe is added to users
+// once the recipe is added to users then added to ingredients
 const submitCreate = (req, res) => {
-    return res.status(201).json({
-        message: "Recipe created and added to user successfully",
-        recipe: req.recipe  
-    });
+    const recipeId = req.recipe._id;
+    // got the igredients from the req.body
+    const ingredients = req.body.ingredients; 
+
+    // used map to go through each ingredient and add the id within the recipes table
+    const ingredientUpdates = ingredients.map(ingredientObj => 
+        Ingredient.findByIdAndUpdate(
+            ingredientObj.ingredient, 
+            { $addToSet: { recipes: recipeId } },  
+            { new: true, useFindAndModify: false }
+        )
+    );
+
+    // promise all waits for all ingredients to finish
+    Promise.all(ingredientUpdates)
+        .then(() => {
+            res.status(201).json({
+                message: "Recipe created and added to ingredients successfully",
+                recipe: req.recipe  
+            });
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Failed to update ingredients", error: err });
+        });
 };
+
+
+
 
 const updateData = (req,res) => {
     let id = req.params.id;
