@@ -9,7 +9,7 @@ const{
     deleteData
     } = require('../controllers/ingredient.controller')
 
-    const {loginRequired, hasRole} = require('../controllers/user.controller');
+    const {loginRequired, hasRole} = require('../middleware/auth.middleware');
 
 router.get('/', readAll);
 

@@ -7,22 +7,20 @@ const{
     createData,
     updateData,
     deleteData,
-    recipesByUser
+    submitCreate
     } = require('../controllers/recipe.controller')
 
-    const {loginRequired} = require('../controllers/user.controller');
+    const {loginRequired,ownsRecipe,addRecipeToUser} = require('../middleware/auth.middleware');
     
 router.get('/', readAll);
 
 router.get('/:id',loginRequired, readOne);
-// all recipes by user
-router.get('/myRecipes',loginRequired, recipesByUser);
 
-router.post('/',loginRequired, createData);
+router.post('/',loginRequired, createData,addRecipeToUser,submitCreate);
+// added middleware to check if id matches the recipe id
+router.put('/:id',loginRequired,ownsRecipe, updateData);
 
-router.put('/:id',loginRequired, updateData);
-
-router.delete('/:id',loginRequired, deleteData);
+router.delete('/:id',loginRequired,ownsRecipe, deleteData);
 
 
 module.exports = router;

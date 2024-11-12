@@ -39,6 +39,7 @@ const recipeSchema = new Schema({
             type:Number,
             required: [true, 'Ingredient quantity is required']
         }
+        
     }],
     image_path:{
         type:String

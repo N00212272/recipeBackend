@@ -29,6 +29,10 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref:'Recipe' 
     }],
+    recipes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Recipe'
+    }],
     // many to many
     roles: [{
         type: Schema.Types.ObjectId,
