@@ -175,11 +175,12 @@ const deleteData = async (req,res) => {
     if (foundRecipe.user.toString() !== userId.toString()) {
         return res.status(403).json({ message: "You are not authorized to delete this recipe" });
     }
-    await Recipe.findByIdAndDelete(id)
+    await Recipe.findByIdAndUpdate(id)
     .then(data => {
         if(!data){
             return res.status(404).json({ message: `Recipe with id ${id} not found` });
         }
+        
          return res.status(200).json({
         "message":`Recipe Deleted with id: ${id} `});
     })
