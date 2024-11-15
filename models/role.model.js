@@ -5,6 +5,10 @@ const roleSchema = new Schema({
         type:String,
         required: [true, 'Role name is required'],
         unique: true
+    },
+    isDeleted:{
+        type:Boolean,
+        default: false,
     }
 }, {timestamps: true})
 

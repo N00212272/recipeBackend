@@ -21,7 +21,7 @@ router.post('/',loginRequired, hasRole("admin"), imageUpload.single('image'),cre
 
 router.put('/:id',loginRequired, updateData);
 
-router.delete('/:id',loginRequired, deleteData);
+router.patch('/:id',loginRequired, deleteData);
 
 
 module.exports = router;

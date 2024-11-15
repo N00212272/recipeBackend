@@ -122,28 +122,82 @@ const createData = async (req, res) => {
 
 
 
-const updateData = (req,res) => {
+const updateData = async (req,res) => {
     let id = req.params.id;
     let body = req.body;
     console.log(id)
-    Recipe.findByIdAndUpdate(id,body, {
-        new:true,
-        runValidators:true,
-    })
-        .then(data => {
-            console.log(`Recipe updated`, data);
+    // .then didnt work needed to use a try as i was getting a timeout
+    try {
+        // Find the recipe by ID first to compare old ingredients
+        const foundRecipe = await Recipe.findById(id);
+        if (!foundRecipe) {
+            return res.status(404).json({
+                message: `Recipe with id: ${id} not found`
+            });
+        }
+        const ingredients = [];
+        let i = 0;
+        while (req.body[`ingredients[${i}].ingredient`] && req.body[`ingredients[${i}].quantity`]) {
+            ingredients.push({
+                ingredient: req.body[`ingredients[${i}].ingredient`],
+                quantity: parseInt(req.body[`ingredients[${i}].quantity`], 10),
+            });
+            i++;
+        }
+        body.ingredients = ingredients;
+        // checking if there are ingredients first
+        if (ingredients && ingredients.length > 0){
+            // finding all old ingredients first
+            const oldIngredients = foundRecipe.ingredients.map(ingredientObj => ingredientObj.ingredient.toString());
+            // getting all the new ingredients
+            const newIngredients = ingredients.map(ingredientObj => ingredientObj.ingredient.toString());
+            // checking if the old ingredient id matches any of the new
+            const ingredientsToRemove = oldIngredients.filter(id => !newIngredients.includes(id));
+            // now comparing the new with the old
+            const ingredientsToAdd = newIngredients.filter(id => !oldIngredients.includes(id));
+            // did both to have two variables where i can remove from set and add to set depending on the the variable
+            // empty array to prepare remove and add of ingredients
+            const updatePromises = [];
+            // removing any ingredients that arent there any more
+            if (ingredientsToRemove.length > 0) {
+                updatePromises.push(
+                    await Ingredient.updateMany(
+                        { _id: { $in: ingredientsToRemove } },
+                        // pull to remove from the set
+                        { $pull: { recipes: id } }
+                    )
+                );
+            }
+            // adding any new ingredients
+            if (ingredientsToAdd.length > 0) {
+                updatePromises.push(
+                    await Ingredient.updateMany(
+                        { _id: { $in: ingredientsToAdd } },
+                        { $addToSet: { recipes: id } }
+                    )
+                );    
+            }    
+            await Promise.all(updatePromises);
+        }
+           
+            // updating the recipe
+            const updatedRecipe = await Recipe.findByIdAndUpdate(id, body, {
+                new: true,
+                runValidators: true,
+            });
+
             return res.status(201).json({
-                message: "Recipe updated",
-                data
-            })
-        })
-        .catch(err => {
-            console.log(err)
-            if(err.name === "CastError"){
-                if(err.kind === 'ObjectId'){
-                    return res.status(404).json({
-                        message: `Recipe with id:${id} not found`
-                    });
+                message: "Recipe updated successfully",
+                data: updatedRecipe,
+            });
+        }
+    catch(err) {
+        console.log(err)
+        if(err.name === "CastError"){
+            if(err.kind === 'ObjectId'){
+                return res.status(404).json({
+                    message: `Recipe with id:${id} not found`
+                });
             }
             else{
                 return res.status(422).json({
@@ -152,7 +206,7 @@ const updateData = (req,res) => {
             }
         }
             return res.status(500).json(err)
-        });
+        };
 }
 const deleteData = async (req,res) => {
     let id = req.params.id;
@@ -166,7 +220,11 @@ const deleteData = async (req,res) => {
     if (foundRecipe.user.toString() !== userId.toString()) {
         return res.status(403).json({ message: "You are not authorized to delete this recipe" });
     }
-    await Recipe.findByIdAndUpdate(id)
+    await Recipe.findByIdAndUpdate(
+        id,
+        {$set: {isDeleted:true}},
+        {new:true}
+    )
     .then(data => {
         if(!data){
             return res.status(404).json({ message: `Recipe with id ${id} not found` });

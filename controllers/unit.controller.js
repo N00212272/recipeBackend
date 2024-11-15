@@ -102,7 +102,11 @@ const updateData = (req,res) => {
 const deleteData = (req,res) => {
     let id = req.params.id;
 
-    Unit.findByIdAndDelete(id)
+    Unit.findByIdAndUpdate(
+        id,
+        {$set: {isDeleted:true}},
+        {new:true}
+    )
     .then(data => {
         if(!data){
             return res.status(404).json({ message: `Unit with id ${id} not found` });

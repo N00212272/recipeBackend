@@ -5,6 +5,10 @@ const ingredientCategorySchema = new Schema({
         type:String,
         required: [true, 'Category name is required'],
         unique: true
+    },
+    isDeleted:{
+        type:Boolean,
+        default: false,
     }
 }, {timestamps: true})
 

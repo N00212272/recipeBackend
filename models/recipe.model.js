@@ -44,8 +44,9 @@ const recipeSchema = new Schema({
     image_path:{
         type:String
     },
-    deleted:{
-        type:Boolean
+    isDeleted:{
+        type:Boolean,
+        default: false,
     }
 }, {timestamps:true});
 

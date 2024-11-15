@@ -104,7 +104,11 @@ const updateData = (req,res) => {
 const deleteData = (req,res) => {
     let id = req.params.id;
 
-    Ingredient.findByIdAndDelete(id)
+     Ingredient.findByIdAndUpdate(
+        id,
+        {$set: {isDeleted:true}},
+        {new:true}
+    )
     .then(data => {
         if(!data){
             return res.status(404).json({ message: `Ingredient with id ${id} not found` });

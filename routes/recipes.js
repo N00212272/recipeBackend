@@ -21,8 +21,8 @@ router.get('/:id',loginRequired, readOne);
 router.post('/',loginRequired,imageUpload.single('image'),createData);
 // added middleware to check if id matches the recipe id
 router.put('/:id',loginRequired,ownsRecipe,imageUpload.single('image'), updateData);
-
-router.delete('/:id',loginRequired,ownsRecipe, deleteData);
+// Changed to patch as it will just be a partial update
+router.patch('/:id',loginRequired,ownsRecipe, deleteData);
 
 
 module.exports = router;

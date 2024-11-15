@@ -10,6 +10,10 @@ const unitSchema = new Schema({
         type: String,
         required: [true, 'Unit abbreviation is required'],
         unique: true
+    },
+    isDeleted:{
+        type:Boolean,
+        default: false,
     }
 }, {timestamps: true})
 

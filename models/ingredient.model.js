@@ -29,6 +29,10 @@ const ingredientSchema = new Schema({
     image_path: {
         type: String
     },
+    isDeleted:{
+        type:Boolean,
+        default: false,
+    }
 }, {timestamps:true});
 
 module.exports = model('Ingredient', ingredientSchema)

@@ -19,7 +19,7 @@ router.post('/',loginRequired,hasRole("admin"), createData);
 
 router.put('/:id',loginRequired,hasRole("admin"), updateData);
 
-router.delete('/:id',loginRequired,hasRole("admin"), deleteData);
+router.patch('/:id',loginRequired,hasRole("admin"), deleteData);
 
 
 module.exports = router;

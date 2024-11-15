@@ -83,6 +83,9 @@ function ownsRecipe(req, res, next) {
 //         });
 //     });
 // }
+// Creating a global function which is called in each model isDeleted col to true
+
+
 
 module.exports = {
     loginRequired,

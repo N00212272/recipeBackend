@@ -42,6 +42,10 @@ const userSchema = new Schema({
     image_path: {
         type: String
     },
+    isDeleted:{
+        type:Boolean,
+        default: false,
+    }
 },{timestamps:true});
 
 userSchema.methods.comparePassword = function (password) {
