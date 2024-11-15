@@ -43,7 +43,9 @@ const readOne = (req,res) => {
 const createData = (req,res) => {
     console.log(req.body)
     let body = req.body;
-
+    if(req.file){
+        body.image_path = process.env.STORAGE_ENGINE === 'S3' ? req.file.key : req.file.filename
+    }
     Ingredient.create(body)
         .then(data => {
             console.log(`Ingredient created`, data);

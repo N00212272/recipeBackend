@@ -26,6 +26,9 @@ const ingredientSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Recipe'
     }],
+    image_path: {
+        type: String
+    },
 }, {timestamps:true});
 
 module.exports = model('Ingredient', ingredientSchema)

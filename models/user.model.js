@@ -39,6 +39,9 @@ const userSchema = new Schema({
         ref:'Role',
         required:true
     }],
+    image_path: {
+        type: String
+    },
 },{timestamps:true});
 
 userSchema.methods.comparePassword = function (password) {

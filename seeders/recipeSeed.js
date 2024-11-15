@@ -48,7 +48,7 @@ const seedRecipes = async (count) => {
         recipes.push(recipe);
     }
 // add each created recipe into the recipes array within ingredients
-// simplified way then what was done within within reate
+// simplified way then what was done within within create
    const insertedRecipes = await Recipe.insertMany(recipes);
 
     for (let recipe of insertedRecipes) {

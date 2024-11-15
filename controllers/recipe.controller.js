@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe.model')
 const Ingredient = require('../models/ingredient.model')
+const fs = require('fs')
 const readAll = (req,res) => {
     Recipe.find()
     .then(data => {
@@ -59,11 +60,26 @@ const createData = (req, res, next) => {
     let body = req.body;
     body.user = req.user._id;
     
-
-    // Manually adding validation since it's required but wasn't working in schema
-    if (!body.ingredients || body.ingredients.length === 0) {
-        return res.status(400).json({ message: "Ingredients are required" });
+    // IMAGE UPLOAD TO S3
+    if(req.file){
+        body.image_path = process.env.STORAGE_ENGINE === 'S3' ? req.file.key : req.file.filename
     }
+
+
+    
+    // created an empty array to hold do a loop through any ingrediens within the body and store it
+    const ingredients = [];
+    let i = 0;
+    while (req.body[`ingredients[${i}].ingredient`] && req.body[`ingredients[${i}].quantity`]) {
+        ingredients.push({
+            ingredient: req.body[`ingredients[${i}].ingredient`],
+            quantity: parseInt(req.body[`ingredients[${i}].quantity`], 10)
+        });
+        i++;
+    }
+
+    // Add the ingredients array to the body before validation
+    body.ingredients = ingredients;
 
     
     Recipe.create(body)
@@ -86,6 +102,7 @@ const createData = (req, res, next) => {
 // once the recipe is added to users then added to ingredients
 const submitCreate = (req, res) => {
     const recipeId = req.recipe._id;
+    
     // got the igredients from the req.body
     const ingredients = req.body.ingredients; 
 
@@ -174,6 +191,8 @@ const deleteData = async (req,res) => {
         return res.status(500).json(err)
     })
 }
+
+
 
 module.exports = {
     readAll,

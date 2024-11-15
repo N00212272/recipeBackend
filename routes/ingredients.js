@@ -11,11 +11,13 @@ const{
 
     const {loginRequired, hasRole} = require('../middleware/auth.middleware');
 
+    const imageUpload = require("../config/imageUpload")
+
 router.get('/', readAll);
 
 router.get('/:id', readOne);
 
-router.post('/',loginRequired, hasRole("admin"), createData);
+router.post('/',loginRequired, hasRole("admin"), imageUpload.single('image'),createData);
 
 router.put('/:id',loginRequired, updateData);
 
