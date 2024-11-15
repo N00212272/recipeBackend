@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe.model')
 const Ingredient = require('../models/ingredient.model')
+const User = require('../models/user.model')
 const fs = require('fs')
 const readAll = (req,res) => {
     Recipe.find()
@@ -55,79 +56,69 @@ const readOne = (req,res) => {
     })
 }
 
-const createData = (req, res, next) => {
-    console.log(req.body);
-    let body = req.body;
-    body.user = req.user._id;
-    
-    // IMAGE UPLOAD TO S3
-    if(req.file){
-        body.image_path = process.env.STORAGE_ENGINE === 'S3' ? req.file.key : req.file.filename
-    }
+const createData = async (req, res) => {
+    try {
+        // Extract body and user
+        console.log(req.body);
+        let body = req.body;
+        body.user = req.user._id;
 
+        // Handle image upload to S3
+        if (req.file) {
+            body.image_path = process.env.STORAGE_ENGINE === 'S3' ? req.file.key : req.file.filename;
+        }
 
-    
-    // created an empty array to hold do a loop through any ingrediens within the body and store it
-    const ingredients = [];
-    let i = 0;
-    while (req.body[`ingredients[${i}].ingredient`] && req.body[`ingredients[${i}].quantity`]) {
-        ingredients.push({
-            ingredient: req.body[`ingredients[${i}].ingredient`],
-            quantity: parseInt(req.body[`ingredients[${i}].quantity`], 10)
-        });
-        i++;
-    }
-
-    // Add the ingredients array to the body before validation
-    body.ingredients = ingredients;
-
-    
-    Recipe.create(body)
-        .then(data => {
-            // console.log(`Recipe created`, data);
-            // storing the data to use in the next middleware
-            req.recipe = data; 
-            // console.log(req.recipe.ingredients)
-            next();
-            
-        })
-        .catch(err => {
-            console.log(err);
-            if (err.name === 'ValidationError') {
-                return res.status(422).json({ error: err });
-            }
-            return res.status(500).json(err);
-        });
-};
-// once the recipe is added to users then added to ingredients
-const submitCreate = (req, res) => {
-    const recipeId = req.recipe._id;
-    
-    // got the igredients from the req.body
-    const ingredients = req.body.ingredients; 
-
-    // used map to go through each ingredient and add the id within the recipes table
-    const ingredientUpdates = ingredients.map(ingredientObj => 
-        Ingredient.findByIdAndUpdate(
-            ingredientObj.ingredient, 
-            { $addToSet: { recipes: recipeId } },  
-            { new: true, useFindAndModify: false }
-        )
-    );
-
-    // promise all waits for all ingredients to finish
-    Promise.all(ingredientUpdates)
-        .then(() => {
-            res.status(201).json({
-                message: "Recipe created and added to ingredients successfully",
-                recipe: req.recipe  
+        //created an empty array to hold do a loop through any ingrediens within the body and store it
+        const ingredients = [];
+        let i = 0;
+        while (req.body[`ingredients[${i}].ingredient`] && req.body[`ingredients[${i}].quantity`]) {
+            ingredients.push({
+                ingredient: req.body[`ingredients[${i}].ingredient`],
+                quantity: parseInt(req.body[`ingredients[${i}].quantity`], 10),
             });
-        })
-        .catch(err => {
-            res.status(500).json({ message: "Failed to update ingredients", error: err });
-        });
-};
+            i++;
+        }
 
+        // Attach ingredients to the recipe body
+        body.ingredients = ingredients;
+
+        // Creating the recipe first
+        const recipe = await Recipe.create(body);
+
+        // adding the recipe to the users array
+        const userUpdate = User.findByIdAndUpdate(
+            req.user._id,
+            { $addToSet: { recipes: recipe._id } },
+            { new: true }
+        );
+
+        // Update ingredients with the created recipe's ID
+        const ingredientUpdates = ingredients.map((ingredientObj) =>
+            Ingredient.findByIdAndUpdate(
+                ingredientObj.ingredient,
+                { $addToSet: { recipes: recipe._id } },
+                { new: true, useFindAndModify: false }
+            )
+        );
+        
+        // Wait for recipe to add to user array and using rest operator for all ingredient updates to complete 
+        await Promise.all([userUpdate, ...ingredientUpdates]);
+
+
+        return res.status(201).json({
+                message: "Recipe created",
+                recipe
+        })
+    } catch (err) {
+        console.error(err);
+
+        if (err.name === 'ValidationError') {
+            return res.status(422).json({ error: err });
+        }
+
+        res.status(500).json({ message: "Failed to create recipe", error: err });
+    }
+};
 
 
 
@@ -180,7 +171,7 @@ const deleteData = async (req,res) => {
         if(!data){
             return res.status(404).json({ message: `Recipe with id ${id} not found` });
         }
-        
+
          return res.status(200).json({
         "message":`Recipe Deleted with id: ${id} `});
     })
@@ -199,7 +190,6 @@ module.exports = {
     readAll,
     readOne,
     createData,
-    submitCreate,
     updateData,
     deleteData
 }

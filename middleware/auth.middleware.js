@@ -58,34 +58,35 @@ function ownsRecipe(req, res, next) {
             return res.status(500).json({ message: "Server error" });
         });
 }
-const addRecipeToUser = (req, res, next) => {
-    console.log(req);
+// function to add the recipe to the user. Found easier way of dping it 
+// const addRecipeToUser = (req, res, next) => {
+//     console.log(req);
 
-    const userId = req.user._id;
-    const recipeId = req.recipe._id;  
+//     const userId = req.user._id;
+//     const recipeId = req.recipe._id;  
 
-    User.findByIdAndUpdate(
-        userId,
-        { $addToSet: { recipes: recipeId } },  
-        { new: true } 
-    )
-    .then(user => {
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        next();  
-    })
-    .catch(err => {
-        console.error(err);
-        res.status(500).json({
-            message: "Server error while updating user recipes"
-        });
-    });
-}
+//     User.findByIdAndUpdate(
+//         userId,
+//         { $addToSet: { recipes: recipeId } },  
+//         { new: true } 
+//     )
+//     .then(user => {
+//         if (!user) {
+//             return res.status(404).json({ message: "User not found" });
+//         }
+//         next();  
+//     })
+//     .catch(err => {
+//         console.error(err);
+//         res.status(500).json({
+//             message: "Server error while updating user recipes"
+//         });
+//     });
+// }
 
 module.exports = {
     loginRequired,
     hasRole,
     ownsRecipe,
-    addRecipeToUser
+    // addRecipeToUser
 };

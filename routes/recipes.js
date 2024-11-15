@@ -7,10 +7,10 @@ const{
     createData,
     updateData,
     deleteData,
-    submitCreate
+    // submitCreate
     } = require('../controllers/recipe.controller')
 
-    const {loginRequired,ownsRecipe,addRecipeToUser} = require('../middleware/auth.middleware');
+    const {loginRequired,ownsRecipe} = require('../middleware/auth.middleware');
 
     const imageUpload = require("../config/imageUpload")
     
@@ -18,7 +18,7 @@ router.get('/', readAll);
 
 router.get('/:id',loginRequired, readOne);
 
-router.post('/',loginRequired, createData,imageUpload.single('image'),addRecipeToUser,submitCreate);
+router.post('/',loginRequired,imageUpload.single('image'),createData);
 // added middleware to check if id matches the recipe id
 router.put('/:id',loginRequired,ownsRecipe,imageUpload.single('image'), updateData);
 
