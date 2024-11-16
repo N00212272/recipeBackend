@@ -8,7 +8,7 @@
     "serve": "node server.js",
     "seed": "node seeders/seed.js",
     "test": "set ENVIROMENT=testing && jest --testTimeout=10000",
-    "pretest": "set ENVIROMENT=testing && node seeding/seed.js",
+    "pretest": "set ENVIROMENT=testing && node seeders/seed.js",
     "start": "node server.js"
   },
   "repository": {
