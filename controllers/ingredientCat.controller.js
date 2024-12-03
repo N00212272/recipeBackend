@@ -1,4 +1,4 @@
-const IngredientCategory = require('../models/IngredientCategory.model')
+const IngredientCategory = require('../models/ingredientCategory.model')
 
 const readAll = (req,res) => {
     IngredientCategory.find()
