@@ -67,6 +67,11 @@ const getUserRecipes = (req, res) => {
     const userId = req.user._id;
 
     Recipe.find({ user: userId })
+    .populate({
+        path: 'category',
+        model: 'RecipeCategory', 
+        select: 'name' 
+      })
         .then(recipes => {
             if (recipes.length > 0) {
                 return res.status(200).json({
@@ -151,7 +156,7 @@ const getFavourites = (req, res) => {
             // path specifies which id we want to populate. which holds recipe ids
             path: 'favourites',
             // acts as a resource, only showing some of the data from the Recipe
-            select: 'title description cooking_time image_path' 
+            select: 'title description cooking_time image_path , category' 
         })
         .then(user => {
             if (!user) {
