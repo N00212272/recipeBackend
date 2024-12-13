@@ -10,7 +10,7 @@ const recipeSchema = new Schema({
         required: [true, 'desciption field is required']
     },
     cooking_time: {
-        type:String,
+        type:Number,
         required: [true, 'cooking time field is required']
     },
     instructions: {

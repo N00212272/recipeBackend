@@ -37,7 +37,7 @@ const seedRecipes = async (count) => {
             title: faker.food.dish(),
             description: faker.lorem.sentences(2),
             // random cooking time
-            cooking_time: `${Math.floor(Math.random() * 120) + 1} minutes`,
+            cooking_time: `${Math.floor(Math.random() * 120) + 1}`,
             instructions: faker.lorem.paragraph(),
             category: categories[Math.floor(Math.random() * categories.length)]._id,
             user: users[Math.floor(Math.random() * users.length)]._id,
