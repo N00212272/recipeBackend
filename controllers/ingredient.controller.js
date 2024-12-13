@@ -2,6 +2,16 @@ const Ingredient = require('../models/ingredient.model')
 
 const readAll = (req,res) => {
     Ingredient.find()
+    .populate({
+        path: 'category_id', 
+        model: 'IngredientCategory', 
+        select: 'name' 
+    })
+    .populate({
+        path: 'unit_id', 
+        model: 'Unit', 
+        select: 'name abbreviation' 
+    })
     .then(data => {
         console.log(data);
         if(data.length > 0){
@@ -20,6 +30,16 @@ const readAll = (req,res) => {
 const readOne = (req,res) => {
     let id = req.params.id;
     Ingredient.findById(id)
+    .populate({
+        path: 'category_id', 
+        model: 'IngredientCategory', 
+        select: 'name' 
+    })
+    .populate({
+        path: 'unit_id', 
+        model: 'Unit', 
+        select: 'name abbreviation' 
+    })
     .then(data => {
         if(!data){
             return res.status(404).json({

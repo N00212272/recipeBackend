@@ -4,6 +4,11 @@ const User = require('../models/user.model')
 const fs = require('fs')
 const readAll = (req,res) => {
     Recipe.find()
+    .populate({
+        path: 'category',
+        model: 'RecipeCategory', 
+        select: 'name' 
+      })
     .then(data => {
         console.log(data);
         if(data.length > 0){
@@ -23,6 +28,11 @@ const readAll = (req,res) => {
 const readOne = (req,res) => {
     let id = req.params.id;
     Recipe.findById(id)
+    .populate({
+        path: 'category',
+        model: 'RecipeCategory', 
+        select: 'name' 
+      })
     .populate({
         // had to reference the path of populated field
         path: 'ingredients.ingredient',  
