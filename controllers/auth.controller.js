@@ -48,7 +48,8 @@ const login = (req,res) => {
             message:"Logged in succesfully",
             token: jwt.sign({
                 email: user.email,
-                full_name: user.full_name,
+                first_name: user.firstName,
+                last_name: user.lastName,
                 _id: user._id,
                 roles: user.roles
             },process.env.JWT_SECRET),
