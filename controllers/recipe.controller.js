@@ -220,16 +220,17 @@ const updateData = async (req,res) => {
 }
 const deleteData = async (req,res) => {
     let id = req.params.id;
-    const userId = req.user._id;
+    // const userId = req.user._id;
+    // const userRole = req.user.role;
     const foundRecipe = await Recipe.findById(id);
 
     if (!foundRecipe) {
         return res.status(404).json({ message: `Recipe with id ${id} not found` });
     }
     // had to make it to string as it wasn't working when the id wasnt transformed to string
-    if (foundRecipe.user.toString() !== userId.toString()) {
-        return res.status(403).json({ message: "You are not authorized to delete this recipe" });
-    }
+    // if (foundRecipe.user.toString() !== userId.toString()) {
+    //     return res.status(403).json({ message: "You are not authorized to delete this recipe" });
+    // }
     await Recipe.findByIdAndUpdate(
         id,
         {$set: {isDeleted:true}},

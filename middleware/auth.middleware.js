@@ -45,6 +45,9 @@ function ownsRecipe(req, res, next) {
                     message: "Recipe not found"
                 });
             }
+            if (req.user.roles.some(userRole => userRole.name === 'admin')) {
+                return next();
+            }
             // place both into a string as i was having issues when they weren't in a string
             if (recipe.user.toString() !== userId.toString()) {
                 return res.status(403).json({
