@@ -39,7 +39,7 @@ const getUserById = (req, res) => {
 
     User.findById(userId)
         .populate('recipes', 'title cookingTime description')
-        
+        .populate('roles', 'name')
         .then(user => {
             console.log(user)
             if (!user) {
