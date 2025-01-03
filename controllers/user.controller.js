@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user.model');
 const Role = require('../models/role.model');
-const Recipe = require('../models/recipe.model')
+const Recipe = require('../models/recipe.model');
+const roleModel = require('../models/role.model');
 require('dotenv').config()
 // getting all users
 const getAllUsers = (req, res) => {
@@ -54,6 +55,8 @@ const getUserById = (req, res) => {
                     lastName: user.lastName,
                     email: user.email,
                     recipes: user.recipes,
+                    isDeleted: user.isDeleted,
+                    roles: user.roles
                 }
             });
         })
