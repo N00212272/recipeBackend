@@ -10,7 +10,7 @@ const getAllUsers = (req, res) => {
     const activeUser = req.user._id;
     User.find()
     // selecting to get only this columns
-        .select('firstName lastName _id') 
+        .select('firstName lastName _id isDeleted') 
         .then(users => {
             // did a standard filter to not show current user
             const filteredUsers = users.filter(user => user._id.toString() !== activeUser.toString());
